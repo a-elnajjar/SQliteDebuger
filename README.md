@@ -3,14 +3,13 @@
 
 
 
-# SQLiteDebuger
-
+# SQLiteDebuger Gigantor
 
 
 https://github.com/a-elnajjar/SQliteDebuger/assets/338095/2da00072-79ee-4399-9aaa-b0ecec078b46
 
 
-`SQLiteDebuger` is an experimental Swift package designed to help developers debug and manage SQLite databases directly within their iOS applications. By leveraging the SQLite3 C API, this package provides a straightforward way to open, switch, and execute SQL statements on SQLite databases. It benefits developers who need to inspect database contents, execute arbitrary queries, and view results in a structured format without leaving their app.
+`SQLiteDebuger Gigantor` is an experimental Swift package designed to help developers debug and manage SQLite databases directly within their iOS applications. By leveraging the SQLite3 C API, this package provides a straightforward way to open, switch, and execute SQL statements on SQLite databases. It benefits developers who need to inspect database contents, execute arbitrary queries, and view results in a structured format without leaving their app.
 
 ## Features
 
