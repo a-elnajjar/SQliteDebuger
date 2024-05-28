@@ -83,9 +83,3 @@ Contributions are welcome! Please fork this repository and submit a pull request
 
 For any questions or suggestions, please open an issue on the GitHub repository.
 
-
-### Notes:
-1. **Repository URL**: Replace `https://github.com/a-elnajjar/SQLiteDebuger.git` with the actual URL of your GitHub repository.
-2. **License**: If you have a `LICENSE` file, ensure it's included. If not, consider adding one.
-3. **Contact Information**: Update the contact information and repository URL as needed.
-
