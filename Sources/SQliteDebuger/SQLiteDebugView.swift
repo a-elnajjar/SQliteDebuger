@@ -13,17 +13,21 @@ public struct SQLiteDebugView: View {
     @State private var sqlStatement: String = ""
     @State private var columnNames: [String] = []
     @State private var results: [[String]] = []
-    
+    @State private var isLoading: Bool = false
+    @State private var errorMessage: String? = nil
+
     public init() {}  // Ensure the initializer is public
 
     @available(iOS 14.0, *)
     public var body: some View {
         VStack {
+            Label("Database Name", systemImage: "database")
             TextField("Enter database name", text: $databaseName)
                 .padding()
                 .border(Color.gray)
                 .frame(width: 300)
             
+            Label("SQL Statement", systemImage: "doc.text")
             TextEditor(text: $sqlStatement)
                 .padding()
                 .border(Color.gray)
@@ -33,6 +37,11 @@ public struct SQLiteDebugView: View {
                 executeSQL()
             }
             .padding()
+            .disabled(isLoading)
+            
+            if isLoading {
+                ProgressView()
+            }
             
             ScrollView {
                 if !columnNames.isEmpty && !results.isEmpty {
@@ -55,18 +64,24 @@ public struct SQLiteDebugView: View {
                         }
                     }
                     .padding()
-                } else {
-                    Text("No results")
+                } else if !isLoading {
+                    Text("No results. Please enter a database name and SQL statement, then click Execute.")
                         .padding()
-                        .frame(width: 300, height: 150)
-                        .border(Color.gray)
                 }
+            }
+            
+            if let errorMessage = errorMessage {
+                Text("Error: \(errorMessage)")
+                    .foregroundColor(.red)
             }
         }
         .padding()
     }
 
     private func executeSQL() {
+        isLoading = true
+        errorMessage = nil
+        
         if !databaseName.isEmpty {
             DatabaseManager.shared.openDatabase(named: databaseName)
         }
@@ -77,8 +92,10 @@ public struct SQLiteDebugView: View {
             columnNames = Array(result.keys)
             results = [Array(result.values.map { String(describing: $0) })]
         case .failure(let error):
-            print(error.localizedDescription)
+            errorMessage = error.localizedDescription
         }
+        
+        isLoading = false
     }
 }
 @available(iOS 14.0, *)
