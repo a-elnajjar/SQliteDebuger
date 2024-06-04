@@ -15,8 +15,13 @@ public struct SQLiteDebugView: View {
     @State private var results: [[String]] = []
     @State private var isLoading: Bool = false
     @State private var errorMessage: String? = nil
-
-    public init() {}  // Ensure the initializer is public
+    
+    private let databaseManager: DatabaseManagerProtocol
+    
+    // Dependency injection through initializer
+    public init(databaseManager: DatabaseManagerProtocol) {
+        self.databaseManager = databaseManager
+    }
 
     @available(iOS 14.0, *)
     public var body: some View {
@@ -82,11 +87,21 @@ public struct SQLiteDebugView: View {
         isLoading = true
         errorMessage = nil
         
-        if !databaseName.isEmpty {
-            DatabaseManager.shared.openDatabase(named: databaseName)
+        guard !databaseName.isEmpty else {
+            errorMessage = "Please enter a database name"
+            isLoading = false
+            return
         }
         
-        switch DatabaseManager.shared.executeSQL(sqlStatement) {
+        guard !sqlStatement.isEmpty else {
+            errorMessage = "Please enter an SQL statement"
+            isLoading = false
+            return
+        }
+        
+        databaseManager.openDatabase(named: databaseName)
+        
+        switch databaseManager.executeSQL(sqlStatement) {
         case .success(let result):
             // Extract column names and row data
             columnNames = Array(result.keys)
@@ -98,7 +113,10 @@ public struct SQLiteDebugView: View {
         isLoading = false
     }
 }
-@available(iOS 14.0, *)
-#Preview {
-    SQLiteDebugView()
-}
+
+
+
+//@available(iOS 14.0, *)
+//#Preview {
+//    //SQLiteDebugView()
+//}

@@ -2,6 +2,7 @@
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 
+// swift-tools-version:5.3
 import PackageDescription
 
 let package = Package(
@@ -17,9 +18,14 @@ let package = Package(
     targets: [
         .target(
             name: "SQLiteDebuger",
-            dependencies: []),
+            dependencies: [],
+            path: "Sources",
+            swiftSettings: [
+                .unsafeFlags(["-Xlinker", "-lsqlite3"], .when(platforms: [.iOS]))
+            ]),
         .testTarget(
             name: "SQLiteDebugerTests",
-            dependencies: ["SQLiteDebuger"]),
+            dependencies: ["SQLiteDebuger"],
+            path: "Tests"),
     ]
 )

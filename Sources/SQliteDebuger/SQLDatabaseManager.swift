@@ -1,5 +1,5 @@
 //
-//  DatabaseManager.swift
+//  SQLDatabaseManager.swift
 //
 //
 //  Created by Abdalla Elnajjar on 2024-05-26.
@@ -8,24 +8,41 @@
 import Foundation
 import SQLite3
 
-enum DatabaseError: Error {
+public enum DatabaseError: Error, Equatable {
     case openDatabase(message: String)
     case executionFailed(message: String)
     case unknown
+    
+    public static func ==(lhs: DatabaseError, rhs: DatabaseError) -> Bool {
+        switch (lhs, rhs) {
+        case (.openDatabase(let lhsMessage), .openDatabase(let rhsMessage)):
+            return lhsMessage == rhsMessage
+        case (.executionFailed(let lhsMessage), .executionFailed(let rhsMessage)):
+            return lhsMessage == rhsMessage
+        case (.unknown, .unknown):
+            return true
+        default:
+            return false
+        }
+    }
 }
 
-class DatabaseManager {
-    static let shared = DatabaseManager()
+public protocol DatabaseManagerProtocol {
+    func openDatabase(named databaseName: String)
+    func executeSQL(_ sql: String) -> Result<[String: Any], DatabaseError>
+}
 
+public class SQLDatabaseManager: DatabaseManagerProtocol {
     private var db: OpaquePointer?
     private var documentsDirectory: String
     private var dbPath: String?
 
-    private init() {
+    public init(database: OpaquePointer? = nil) {
         documentsDirectory = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
+        self.db = database
     }
 
-    func openDatabase(named databaseName: String) {
+    public func openDatabase(named databaseName: String) {
         dbPath = (documentsDirectory as NSString).appendingPathComponent("\(databaseName).sqlite")
         
         if let dbPath = dbPath, sqlite3_open(dbPath, &db) != SQLITE_OK {
@@ -35,7 +52,7 @@ class DatabaseManager {
         }
     }
 
-    func executeSQL(_ sql: String) -> Result<[String: Any], DatabaseError> {
+    public func executeSQL(_ sql: String) -> Result<[String: Any], DatabaseError> {
         var queryStatement: OpaquePointer?
         var result: [String: Any] = [:]
         
