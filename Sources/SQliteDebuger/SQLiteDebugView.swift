@@ -99,17 +99,25 @@ public struct SQLiteDebugView: View {
             return
         }
         
-        databaseManager.openDatabase(named: databaseName)
-        
+        switch databaseManager.openDatabase(named: databaseName) {
+        case .success:
+            break
+        case .failure(let error):
+            errorMessage = error.localizedDescription
+            isLoading = false
+            return
+        }
+
         switch databaseManager.executeSQL(sqlStatement) {
         case .success(let result):
-            // Extract column names and row data
-            columnNames = Array(result.keys)
-            results = [Array(result.values.map { String(describing: $0) })]
+            columnNames = result.columnNames
+            results = result.rows.map { row in
+                row.map { $0.description }
+            }
         case .failure(let error):
             errorMessage = error.localizedDescription
         }
-        
+
         isLoading = false
     }
 }

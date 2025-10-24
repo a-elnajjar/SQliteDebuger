@@ -37,7 +37,9 @@ class DatabaseManagerTests: XCTestCase {
         // Then
         switch result {
         case .success(let data):
-            XCTAssertEqual(data["name"] as? String, "John Doe")
+            XCTAssertEqual(data.columnNames, ["id", "name"])
+            XCTAssertEqual(data.rows.count, 1)
+            XCTAssertEqual(data.rows.first?[1], SQLValue.text("John Doe"))
         case .failure(let error):
             XCTFail("Execution failed with error: \(error)")
         }

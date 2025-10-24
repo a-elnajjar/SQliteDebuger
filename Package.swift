@@ -22,6 +22,9 @@ let package = Package(
             path: "Sources",
             swiftSettings: [
                 .unsafeFlags(["-Xlinker", "-lsqlite3"], .when(platforms: [.iOS]))
+            ],
+            linkerSettings: [
+                .linkedLibrary("sqlite3")
             ]),
         .testTarget(
             name: "SQLiteDebugerTests",
